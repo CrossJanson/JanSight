@@ -1,0 +1,7 @@
+{
+  "name": "JanSight",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
