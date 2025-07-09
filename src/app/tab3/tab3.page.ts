@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tab3',
