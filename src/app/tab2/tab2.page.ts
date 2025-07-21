@@ -15,10 +15,6 @@ export class Tab2Page {
 constructor(public photoService: PhotoService,
             public actionSheetController: ActionSheetController) {}
 
-async ngOnInit() {
-  await this.photoService.loadSaved();
-}
-
 addPhotoToGallery() {
   this.photoService.addNewToGallery();
 }

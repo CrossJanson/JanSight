@@ -1,5 +1,5 @@
 {
-  "name": "JanSight",
+  "name": "JanSightMultiPic",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -30,6 +30,7 @@
     "@capacitor/keyboard": "7.0.1",
     "@capacitor/live-updates": "^0.4.0",
     "@capacitor/preferences": "^7.0.1",
+    "@capacitor/screen-orientation": "^7.0.1",
     "@capacitor/status-bar": "7.0.1",
     "@ionic/angular": "^8.0.0",
     "@ionic/pwa-elements": "^3.3.0",

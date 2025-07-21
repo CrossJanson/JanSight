@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.JanSight',
-  appName: 'JanSight',
+  appId: 'io.ionic.JanSightMultiPic',
+  appName: 'JanSightMultiPic',
   webDir: 'www',
   plugins: {
     LiveUpdates: {

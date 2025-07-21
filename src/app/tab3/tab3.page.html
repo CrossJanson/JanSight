@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Cloud Uploads / Settings
+      Cloud Storage / Upload
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -19,24 +19,23 @@
     <ion-row>
       <ion-col></ion-col>
 
-        <ion-col size="10">
+        <ion-col size="12">
 
         <ion-card>
           <ion-card-header>
-            <ion-card-title>FTP Configuration</ion-card-title>
-            <ion-card-subtitle>Allow the upload of your photos to our remote server for storage.</ion-card-subtitle>
+            <ion-card-title>Cloud Uploads / Configuration</ion-card-title>
+            <ion-card-subtitle>Allow the upload of your photos to your remote server for storage.</ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
               <ion-list>
           <ion-item>
-            <ion-toggle>Allow upload Sync</ion-toggle>
+            <ion-icon aria-hidden="true" name="sync" slot="start"></ion-icon>
+            <ion-toggle>Allow background synchronization</ion-toggle>
           </ion-item>
           <ion-item>
-            <ion-toggle>Full Quality Uploads</ion-toggle>
-          </ion-item>
-          <ion-item>
-            <ion-toggle>Confirm when complete</ion-toggle>
+            <ion-icon aria-hidden="true" name="checkmark-circle-outline" slot="start"></ion-icon>
+            <ion-toggle>Notification when complete</ion-toggle>
           </ion-item>
         </ion-list>
           </ion-card-content>
@@ -48,10 +47,43 @@
   </ion-row>
 </ion-grid>
 
-</ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col></ion-col>
 
-<ion-footer>
-  <ion-toolbar>
-    <ion-title> JanSight v1.04 </ion-title>
-  </ion-toolbar>
-</ion-footer>
+        <ion-col size="12">
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Upload Method</ion-card-title>
+            <ion-card-subtitle>
+
+              <ion-list>
+              <ion-item>
+                <ion-label>For bandwith considerations, you may choose your upload method(s).</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon aria-hidden="true" name="wifi" slot="start"></ion-icon>
+                <ion-toggle>Wi-Fi</ion-toggle>
+              </ion-item>
+              <ion-item>
+                <ion-icon aria-hidden="true" name="call" slot="start"></ion-icon>
+                <ion-toggle>Cellular</ion-toggle>
+              </ion-item>
+            </ion-list>
+              
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+
+          </ion-card-content>
+        </ion-card>
+
+        </ion-col>
+
+    <ion-col></ion-col>
+  </ion-row>
+</ion-grid>
+
+</ion-content>

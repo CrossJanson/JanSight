@@ -1,4 +1,4 @@
-package io.ionic.JanSight;
+package io.ionic.JanSightMultiPic;
 
 import com.getcapacitor.BridgeActivity;
 

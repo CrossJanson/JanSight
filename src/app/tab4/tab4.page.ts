@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 @Component({
   selector: 'app-tab4',
@@ -10,5 +11,9 @@ import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
 export class Tab4Page {
 
   constructor() {}
+
+  async ngOnInit() {
+  await ScreenOrientation.lock({ orientation: 'portrait' });
+}
 
 }
