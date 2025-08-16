@@ -27,6 +27,7 @@
     "@capacitor/core": "7.4.1",
     "@capacitor/filesystem": "^7.1.2",
     "@capacitor/haptics": "7.0.1",
+    "@capacitor/ios": "7.4.1",
     "@capacitor/keyboard": "7.0.1",
     "@capacitor/live-updates": "^0.4.0",
     "@capacitor/preferences": "^7.0.1",
