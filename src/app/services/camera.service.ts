@@ -1,19 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Capacitor } from '@capacitor/core';
-
-/**
- * Interface representing a captured image with metadata.
- * Contains all the information needed to display and manage captured photos.
- */
-export interface CapturedImage {
-  /** The web-accessible image URL (converted from file:// using Capacitor.convertFileSrc) */
-  uri: string;
-  /** When the image was captured */
-  timestamp: Date;
-  /** Unique identifier for the image (used for deletion/management) */
-  id: string;
-}
+import { CameraImageData, CapturedImage } from 'camera-multi-capture';
 
 /**
  * Camera Service - Manages camera state and captured images using RxJS Observables
@@ -112,12 +99,11 @@ export class CameraService {
    * 
    * @param imageUris Array of image file URIs from the camera (e.g., "file://data/user/...")
    */
-  addCapturedImages(imageUris: string[]): void {
+  addCapturedImages(images: CameraImageData[]): void {
     const currentImages = this.capturedImagesSubject.value;
-    const newImages: CapturedImage[] = imageUris.map(uri => ({
-      uri: Capacitor.convertFileSrc(uri), // 🔧 Convert file:// to web-accessible URL
-      timestamp: new Date(),
-      id: this.generateId()
+    const newImages: CapturedImage[] = images.map(image => ({
+      id: this.generateId(),
+      data: image
     }));
     
     const updatedImages = [...currentImages, ...newImages];

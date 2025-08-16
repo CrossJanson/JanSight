@@ -43,10 +43,9 @@ export class CameraPage implements OnInit {
 
     try {
       const result: CameraOverlayResult = await initialize(cameraInitOptions);
-      const imageUris = result.images.map((image: CameraImageData) => image.uri);
       
-      if (imageUris.length > 0) {
-        this.cameraService.addCapturedImages(imageUris);
+      if (result.images.length > 0) {
+        await this.cameraService.addCapturedImages(result.images);
       }
       
       this.goBack();
