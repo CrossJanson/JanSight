@@ -5,6 +5,7 @@ import { Preferences } from '@capacitor/preferences';
 
 import { Platform } from '@ionic/angular';
 
+
 @Injectable({
   providedIn: 'root'
 })

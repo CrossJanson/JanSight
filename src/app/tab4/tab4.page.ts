@@ -10,10 +10,8 @@ import { ScreenOrientation } from '@capacitor/screen-orientation';
 })
 export class Tab4Page {
 
-  constructor() {}
+  rangeValue: number = 8; // Initialize with the max value
 
-  async ngOnInit() {
-  await ScreenOrientation.lock({ orientation: 'portrait' });
-}
+  constructor() {}
 
 }
