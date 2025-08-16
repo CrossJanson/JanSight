@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab3',
@@ -9,6 +9,9 @@ import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
 })
 export class Tab3Page {
 
-  constructor() {}
+  constructor(private navCtrl: NavController) {}
 
+  async initCamera() {
+    this.navCtrl.navigateForward('/camera');
+  }
 }
