@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CameraImageData, CapturedImage } from 'camera-multi-capture';
+import { PhotoService } from './photo.service';
 
 /**
  * Camera Service - Manages camera state and captured images using RxJS Observables
@@ -35,7 +36,9 @@ export class CameraService {
   private capturedImagesSubject = new BehaviorSubject<CapturedImage[]>([]);
   private isCapturingSubject = new BehaviorSubject<boolean>(false);
 
-  constructor() { }
+  constructor(
+    private photoService: PhotoService
+  ) { }
 
   /**
    * Observable stream of captured images
@@ -108,6 +111,9 @@ export class CameraService {
     
     const updatedImages = [...currentImages, ...newImages];
     this.capturedImagesSubject.next(updatedImages);
+
+    // save the images using photo.service
+    this.photoService.addMultipleToGallery(newImages);
   }
 
   /**

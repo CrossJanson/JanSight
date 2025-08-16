@@ -4,6 +4,7 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 
 import { Platform } from '@ionic/angular';
+import { CapturedImage } from 'camera-multi-capture';
 
 
 @Injectable({
@@ -59,6 +60,35 @@ public async addNewToGallery() {
   value: JSON.stringify(this.photos),
 });
 
+}
+
+public async addMultipleToGallery(images: CapturedImage[]) {
+const photos: Photo[] = [];
+for (const image of images) {
+  photos.push({
+    webPath: image.data.webPath,
+    saved: false,
+    format: 'jpeg',
+  });
+}
+
+  // save the photos
+  const savedPhotos = await this.savePictures(photos);
+  this.photos.unshift(...savedPhotos);
+
+  Preferences.set({
+    key: this.PHOTO_STORAGE,
+    value: JSON.stringify(this.photos),
+  });
+}
+
+private async savePictures(photos: Photo[]): Promise<UserPhoto[]> {
+  const savedPhotos: UserPhoto[] = [];
+  for (const photo of photos) {
+    const savedPhoto = await this.savePicture(photo);
+    savedPhotos.push(savedPhoto);
+  }
+  return savedPhotos;
 }
 
 private async savePicture(photo: Photo) {
