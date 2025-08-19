@@ -42,6 +42,18 @@ export class CameraPage implements OnInit {
     };
 
     try {
+      const permissions = await CameraMultiCapture.checkPermissions();
+
+      if (permissions.camera !== 'granted' || permissions.photos !== 'granted') {
+        // Request permissions
+        const result = await CameraMultiCapture.requestPermissions();
+        
+        if (result.camera !== 'granted') {
+          console.error('Camera permission denied');
+          return;
+        }
+      }
+
       const result: CameraOverlayResult = await initialize(cameraInitOptions);
       
       if (result.images.length > 0) {
