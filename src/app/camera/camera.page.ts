@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { CameraImageData, CameraMultiCapture, CameraOverlayOptions, CameraOverlayResult, initialize } from 'camera-multi-capture';
 import { CameraService } from '../services/camera.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-camera',
@@ -17,7 +18,8 @@ export class CameraPage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -25,6 +27,13 @@ export class CameraPage implements OnInit {
   }
 
   async ionViewDidEnter() {
+    const maxCaptures = this.route.snapshot.queryParamMap.get('maxCaptures');
+    if (maxCaptures) {
+      this.cameraOverlayOptions.maxCaptures = parseInt(maxCaptures);
+    }
+
+    console.log('maxCaptures', maxCaptures);
+
     this.cameraService.setCapturingState(true);
     await this.initCamera();
   }
@@ -35,11 +44,6 @@ export class CameraPage implements OnInit {
       cameraContainer.style.width = '100%';
       cameraContainer.style.height = '100%';
     }
-
-    const cameraInitOptions = {
-      quality: 90,
-      containerId: 'camera-container'
-    };
 
     try {
       const permissions = await CameraMultiCapture.checkPermissions();
@@ -54,7 +58,7 @@ export class CameraPage implements OnInit {
         }
       }
 
-      const result: CameraOverlayResult = await initialize(cameraInitOptions);
+      const result: CameraOverlayResult = await initialize(this.cameraOverlayOptions);
       
       if (result.images.length > 0) {
         await this.cameraService.addCapturedImages(result.images);

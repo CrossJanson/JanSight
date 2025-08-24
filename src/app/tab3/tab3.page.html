@@ -11,10 +11,48 @@
     <ion-icon name="camera-outline" size="large" color="medium"></ion-icon>
     <h3>Multi-Picture Camera</h3>
     <p style="margin-bottom: 40px;">Capture multiple photos at once</p>
-    
+
     <ion-button (click)="initCamera()" shape="round" size="large">
       <ion-icon slot="start" name="camera"></ion-icon>
       Start Camera
     </ion-button>
+  </div>
+  <br>
+  
+  <div class="ion-padding">
+    <ion-item lines="none">
+      <ion-label>Capture Mode</ion-label>
+    </ion-item>
+    
+    <ion-segment mode="ios" value="infinite" (ionChange)="onSegmentChange($event)">
+      <ion-segment-button value="single">
+        <ion-label>Single</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="custom">
+        <ion-label>Custom</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="infinite">
+        <ion-label>Infinite</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ion-item *ngIf="captureMode === 'custom'" lines="none">
+      <ion-label position="stacked">Number of Photos</ion-label>
+      <ion-input 
+        [(ngModel)]="customCaptureCount" 
+        type="number" 
+        min="1" 
+        max="50"
+        placeholder="Enter number">
+      </ion-input>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-label color="medium">
+        <p *ngIf="captureMode === 'single'">Capture 1 photo</p>
+        <p *ngIf="captureMode === 'custom'">Capture {{ customCaptureCount }} photos</p>
+        <p *ngIf="captureMode === 'infinite'">Capture unlimited photos</p>
+      </ion-label>
+    </ion-item>
   </div>
 </ion-content>
