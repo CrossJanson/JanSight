@@ -13,7 +13,45 @@ import { ActivatedRoute } from '@angular/router';
 export class CameraPage implements OnInit {
   cameraOverlayOptions: CameraOverlayOptions = {
     quality: 90,
-    containerId: 'camera-container'
+    containerId: 'camera-container',
+    flashAutoModeEnabled: false,
+    buttons: {
+      switchCamera: {
+        icon: `../../assets/switchCamera.svg`,
+        style: {
+          radius: 40,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: '#ffffff',
+          padding: '0px',
+          size: 40
+        },
+      }
+      ,
+      capture: {
+        icon: `../../assets/capture.svg`,
+        style: {
+          radius: 70,
+          backgroundColor: 'rgba(0,0,0,0)',
+          opacity: 0.5,
+          color: '#ffffff',
+          padding: '0px',
+          size: 70
+        },
+      },
+      flash: {
+        offIcon: `../../assets/offIcon.svg`,
+        onIcon: `../../assets/onIcon.svg`,
+        style: {
+          radius: 40,
+          backgroundColor: 'rgba(0,0,0,0)',
+          color: '#ffffff',
+          padding: '0px',
+          size: 40
+        },
+        position: 'topLeft'
+
+      }
+    }
   };
 
   constructor(
