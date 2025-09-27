@@ -25,8 +25,7 @@ export class CameraPage implements OnInit {
           padding: '0px',
           size: 40
         },
-      }
-      ,
+      },
       capture: {
         icon: `../../assets/capture.svg`,
         style: {
@@ -46,10 +45,10 @@ export class CameraPage implements OnInit {
           backgroundColor: 'rgba(0,0,0,0)',
           color: '#ffffff',
           padding: '0px',
-          size: 40
+          size: 40,
+          filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.8))'
         },
         position: 'topLeft'
-
       }
     }
   };
