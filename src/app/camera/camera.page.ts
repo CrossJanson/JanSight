@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { CameraImageData, CameraMultiCapture, CameraOverlayOptions, CameraOverlayResult, initialize } from 'camera-multi-capture';
+import { CameraMultiCapture, CameraOverlayOptions, CameraOverlayResult, initialize } from 'camera-multi-capture';
 import { CameraService } from '../services/camera.service';
+import { CloudUploadService } from '../services/cloud-upload.service';
+import { SettingsService } from '../services/settings.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -56,6 +58,8 @@ export class CameraPage implements OnInit {
   constructor(
     private navCtrl: NavController,
     private cameraService: CameraService,
+    private cloudUploadService: CloudUploadService,
+    private settingsService: SettingsService,
     private route: ActivatedRoute
   ) { }
 
@@ -68,8 +72,6 @@ export class CameraPage implements OnInit {
     if (maxCaptures) {
       this.cameraOverlayOptions.maxCaptures = parseInt(maxCaptures);
     }
-
-    console.log('maxCaptures', maxCaptures);
 
     this.cameraService.setCapturingState(true);
     await this.initCamera();
@@ -88,19 +90,28 @@ export class CameraPage implements OnInit {
       if (permissions.camera !== 'granted' || permissions.photos !== 'granted') {
         // Request permissions
         const result = await CameraMultiCapture.requestPermissions();
-        
+
         if (result.camera !== 'granted') {
           console.error('Camera permission denied');
           return;
         }
       }
 
-      const result: CameraOverlayResult = await initialize(this.cameraOverlayOptions);
-      
-      if (result.images.length > 0) {
-        await this.cameraService.addCapturedImages(result.images);
+      // Handle result based on ActiveSync setting
+      const isActiveSyncEnabled = this.settingsService.isActiveSyncEnabled;
+
+      if (isActiveSyncEnabled) {
+        window.addEventListener('photoAdded', this.handlePhotoAdded);
       }
-      
+
+      const result: CameraOverlayResult = await initialize(this.cameraOverlayOptions);
+
+      if (!isActiveSyncEnabled) {
+        if (result.images.length > 0) {
+          this.cameraService.addCapturedImages(result.images);
+        }
+      }
+
       this.goBack();
     } catch (error) {
       console.error('Camera initialization failed:', error);
@@ -122,5 +133,35 @@ export class CameraPage implements OnInit {
   ionViewWillLeave() {
     this.cameraService.setCapturingState(false);
     document.querySelector('ion-app')?.classList.remove('camera-mode');
+
+    // Clean up event listeners
+    this.cleanupPhotoAddedHandler();
+  }
+
+  /**
+   * Handle individual photo added events for cloud upload
+   * 
+   * This method gets called for each photo taken when ActiveSync is enabled
+   * It bypasses local storage and uploads directly to the cloud
+   */
+  private handlePhotoAdded = async (event: Event): Promise<void> => {
+    const customEvent = event as CustomEvent;
+    const imageUri = customEvent.detail.image.uri;
+
+    try {
+      await this.cloudUploadService.uploadImage(imageUri);
+    } catch (error) {
+      console.error('[Camera] Cloud upload failed:', error);
+    }
+  }
+
+  /**
+   * Clean up event listeners
+   * 
+   * Important: Remove event listeners to prevent memory leaks
+   * and duplicate handlers when navigating between pages
+   */
+  private cleanupPhotoAddedHandler(): void {
+    window.removeEventListener('photoAdded', this.handlePhotoAdded);
   }
 }
