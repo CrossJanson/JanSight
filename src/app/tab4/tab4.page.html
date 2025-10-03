@@ -58,7 +58,11 @@
               <ion-list>
           <ion-item>
             <ion-icon aria-hidden="true" name="sync" slot="start"></ion-icon>
-            <ion-toggle>ActiveSync Upload</ion-toggle>
+            <ion-toggle 
+              [checked]="activeSyncUpload" 
+              (ionChange)="onActiveSyncToggle($event)">
+              ActiveSync Upload
+            </ion-toggle>
           </ion-item>
         </ion-list>
           </ion-card-content>
