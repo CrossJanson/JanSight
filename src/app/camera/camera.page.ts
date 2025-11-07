@@ -4,6 +4,7 @@ import { CameraMultiCapture, CameraOverlayOptions, CameraOverlayResult, initiali
 import { CameraService } from '../services/camera.service';
 import { CloudUploadService } from '../services/cloud-upload.service';
 import { SettingsService } from '../services/settings.service';
+import { OrientationAlertService } from '../services/orientation-alert.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -13,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
   standalone: false,
 })
 export class CameraPage implements OnInit {
+
   cameraOverlayOptions: CameraOverlayOptions = {
     quality: 90,
     containerId: 'camera-container',
@@ -60,7 +62,8 @@ export class CameraPage implements OnInit {
     private cameraService: CameraService,
     private cloudUploadService: CloudUploadService,
     private settingsService: SettingsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private orientationAlertService: OrientationAlertService
   ) { }
 
   ngOnInit() {
@@ -97,6 +100,8 @@ export class CameraPage implements OnInit {
         }
       }
 
+      await this.orientationAlertService.start();
+
       // Handle result based on ActiveSync setting
       const isActiveSyncEnabled = this.settingsService.isActiveSyncEnabled;
 
@@ -121,6 +126,7 @@ export class CameraPage implements OnInit {
 
   async goBack() {
     try {
+      await this.orientationAlertService.stop();
       await CameraMultiCapture.stop();
     } catch (error: any) {
       console.error('Error stopping camera:', error);
@@ -130,12 +136,13 @@ export class CameraPage implements OnInit {
     }
   }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.cameraService.setCapturingState(false);
     document.querySelector('ion-app')?.classList.remove('camera-mode');
 
     // Clean up event listeners
     this.cleanupPhotoAddedHandler();
+    await this.orientationAlertService.stop();
   }
 
   /**
