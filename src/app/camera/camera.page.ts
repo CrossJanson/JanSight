@@ -18,6 +18,10 @@ export class CameraPage implements OnInit {
     quality: 90,
     containerId: 'camera-container',
     flashAutoModeEnabled: false,
+    pinchToZoom: {
+      enabled: true,
+      lockToNearestStep: false
+    },
     buttons: {
       switchCamera: {
         icon: `../../assets/switchCamera.svg`,
@@ -39,6 +43,7 @@ export class CameraPage implements OnInit {
           padding: '0px',
           size: 70
         },
+        
       },
       flash: {
         offIcon: `../../assets/offIcon.svg`,
@@ -89,7 +94,6 @@ export class CameraPage implements OnInit {
       const permissions = await CameraMultiCapture.checkPermissions();
 
       if (permissions.camera !== 'granted' || permissions.photos !== 'granted') {
-        // Request permissions
         const result = await CameraMultiCapture.requestPermissions();
 
         if (result.camera !== 'granted') {
@@ -98,11 +102,11 @@ export class CameraPage implements OnInit {
         }
       }
 
-      // Handle result based on ActiveSync setting
       const isActiveSyncEnabled = this.settingsService.isActiveSyncEnabled;
 
       if (isActiveSyncEnabled) {
         window.addEventListener('photoAdded', this.handlePhotoAdded);
+        window.addEventListener('videoRecordingStopped', this.handleVideoAdded);
       }
 
       const result: CameraOverlayResult = await initialize(this.cameraOverlayOptions);
@@ -110,6 +114,9 @@ export class CameraPage implements OnInit {
       if (!isActiveSyncEnabled) {
         if (result.images.length > 0) {
           this.cameraService.addCapturedImages(result.images);
+        }
+        if (result.videos.length > 0) {
+          this.cameraService.addCapturedVideos(result.videos);
         }
       }
 
@@ -134,17 +141,9 @@ export class CameraPage implements OnInit {
   async ionViewWillLeave() {
     this.cameraService.setCapturingState(false);
     document.querySelector('ion-app')?.classList.remove('camera-mode');
-
-    // Clean up event listeners
-    this.cleanupPhotoAddedHandler();
+    this.cleanupEventHandlers();
   }
 
-  /**
-   * Handle individual photo added events for cloud upload
-   * 
-   * This method gets called for each photo taken when ActiveSync is enabled
-   * It bypasses local storage and uploads directly to the cloud
-   */
   private handlePhotoAdded = async (event: Event): Promise<void> => {
     const customEvent = event as CustomEvent;
     const imageUri = customEvent.detail.image.uri;
@@ -156,13 +155,19 @@ export class CameraPage implements OnInit {
     }
   }
 
-  /**
-   * Clean up event listeners
-   * 
-   * Important: Remove event listeners to prevent memory leaks
-   * and duplicate handlers when navigating between pages
-   */
-  private cleanupPhotoAddedHandler(): void {
+  private handleVideoAdded = async (event: Event): Promise<void> => {
+    const customEvent = event as CustomEvent;
+    const videoUri = customEvent.detail.video.uri;
+
+    try {
+      await this.cloudUploadService.uploadMedia(videoUri, 'video');
+    } catch (error) {
+      console.error('[Camera] Cloud video upload failed:', error);
+    }
+  }
+
+  private cleanupEventHandlers(): void {
     window.removeEventListener('photoAdded', this.handlePhotoAdded);
+    window.removeEventListener('videoRecordingStopped', this.handleVideoAdded);
   }
 }

@@ -45,8 +45,12 @@ export class CloudUploadService {
    * @returns Promise<boolean> - true if upload initiated successfully
    */
   async uploadImage(imageUri: string): Promise<boolean> {
+    return this.uploadMedia(imageUri, 'image');
+  }
+
+  async uploadMedia(uri: string, type: 'image' | 'video'): Promise<boolean> {
     try {
-      await this.showToast('📤 Starting upload...', 'primary', 1000);
+      await this.showToast(`📤 Starting ${type} upload...`, 'primary', 1000);
 
       const token = await this.getAuthToken();
       if (!token) {
@@ -54,13 +58,14 @@ export class CloudUploadService {
         return false;
       }
 
-      const sasUrl = await this.getSasToken(token, imageUri);
+      const sasUrl = await this.getSasToken(token, uri, type);
       if (!sasUrl) {
         await this.showToast('Failed to get upload URL', 'danger');
         return false;
       }
 
-      const uploadResult = await this.queueBackgroundUpload(imageUri, sasUrl);
+      const contentType = type === 'video' ? 'video/mp4' : 'image/jpeg';
+      const uploadResult = await this.queueBackgroundUpload(uri, sasUrl, contentType);
       if (!uploadResult) {
         await this.showToast('Failed to queue upload', 'danger');
         return false;
@@ -126,9 +131,10 @@ export class CloudUploadService {
    * SAS (Shared Access Signature) tokens provide secure, time-limited
    * access to Azure storage without exposing credentials
    */
-  private async getSasToken(authToken: string, imageUri: string): Promise<string | null> {
+  private async getSasToken(authToken: string, uri: string, type: 'image' | 'video' = 'image'): Promise<string | null> {
     try {
-      const fileName = this.generateFileName(imageUri);
+      const fileName = this.generateFileName(uri, type);
+      const containerName = type === 'video' ? 'videos' : 'photos';
       
       const response = await fetch(this.SAS_TOKEN_ENDPOINT, {
         method: 'POST',
@@ -138,7 +144,7 @@ export class CloudUploadService {
         },
         body: JSON.stringify({ 
           fileName,
-          containerName: 'photos'
+          containerName
         })
       });
 
@@ -163,13 +169,13 @@ export class CloudUploadService {
    * This leverages the native background upload functionality
    * which continues even if the app is backgrounded or closed
    */
-  private async queueBackgroundUpload(imageUri: string, sasUrl: string): Promise<any> {
+  private async queueBackgroundUpload(uri: string, sasUrl: string, contentType: string = 'image/jpeg'): Promise<any> {
     try {
       const uploadResult = await CameraMultiCapture.queueBackgroundUpload({
-        imageUri: imageUri,
+        imageUri: uri,
         uploadEndpoint: sasUrl,
         headers: { 
-          'Content-Type': 'image/jpeg',
+          'Content-Type': contentType,
           'x-ms-blob-type': 'BlockBlob'
         },
         method: 'PUT'
@@ -236,10 +242,12 @@ export class CloudUploadService {
    * Creates timestamp-based filename to avoid conflicts
    * and provide chronological ordering
    */
-  private generateFileName(imageUri: string): string {
+  private generateFileName(uri: string, type: 'image' | 'video' = 'image'): string {
     const timestamp = Date.now();
     const randomSuffix = Math.random().toString(36).substring(2, 8);
-    return `photo_${timestamp}_${randomSuffix}.jpg`;
+    const ext = type === 'video' ? 'mp4' : 'jpg';
+    const prefix = type === 'video' ? 'video' : 'photo';
+    return `${prefix}_${timestamp}_${randomSuffix}.${ext}`;
   }
 
   /**
