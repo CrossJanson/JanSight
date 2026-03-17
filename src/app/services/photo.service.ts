@@ -182,7 +182,7 @@ export class PhotoService {
     });
 
     const filename = photo.filepath
-                        .substr(photo.filepath.lastIndexOf('/') + 1);
+                        .substring(photo.filepath.lastIndexOf('/') + 1);
 
     await Filesystem.deleteFile({
       path: filename,
@@ -199,7 +199,7 @@ export class PhotoService {
     });
 
     const filename = video.filepath
-                        .substr(video.filepath.lastIndexOf('/') + 1);
+                        .substring(video.filepath.lastIndexOf('/') + 1);
 
     await Filesystem.deleteFile({
       path: filename,
