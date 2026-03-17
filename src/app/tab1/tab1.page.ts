@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { PhotoService, UserPhoto, UserVideo } from '../services/photo.service';
 import { ActionSheetController } from '@ionic/angular';
 import { FileOpener } from '@capacitor-community/file-opener';
@@ -21,6 +22,7 @@ export interface GalleryItem {
   standalone: false,
 })
 export class Tab1Page {
+  galleryItems: GalleryItem[] = [];
 
   constructor(
     public photoService: PhotoService,
@@ -29,9 +31,14 @@ export class Tab1Page {
 
   async ngOnInit() {
     await this.photoService.loadSaved();
+    this.rebuildGalleryItems();
   }
 
-  get galleryItems(): GalleryItem[] {
+  ionViewWillEnter(): void {
+    this.rebuildGalleryItems();
+  }
+
+  private rebuildGalleryItems(): void {
     const items: GalleryItem[] = [];
 
     this.photoService.photos.forEach((photo, i) => {
@@ -43,8 +50,14 @@ export class Tab1Page {
     });
 
     items.sort((a, b) => b.timestamp - a.timestamp);
+    this.galleryItems = items;
+  }
 
-    return items;
+  trackByGalleryItem(_index: number, item: GalleryItem): string {
+    if (item.type === 'photo') {
+      return `photo:${item.photo?.filepath ?? item.photo?.webviewPath ?? item.timestamp}`;
+    }
+    return `video:${item.video?.filepath ?? item.video?.webviewPath ?? item.timestamp}`;
   }
 
   getThumbnail(item: GalleryItem): string | undefined {
@@ -65,32 +78,117 @@ export class Tab1Page {
     const isVideo = item.type === 'video';
     const header = isVideo ? 'Video' : 'Photo';
 
+    const buttons: any[] = [{
+      text: 'View',
+      icon: 'open-outline',
+      handler: () => { this.openFile(item); }
+    }];
+
+    if (!isVideo && item.photo) {
+      buttons.push({
+        text: 'Edit',
+        icon: 'create-outline',
+        handler: () => { this.editPhoto(item.photo!); }
+      });
+    }
+
+    buttons.push({
+      text: 'Delete',
+      role: 'destructive',
+      icon: 'trash',
+      handler: async () => {
+        if (isVideo && item.video) {
+          await this.photoService.deleteVideo(item.video, item.index);
+        } else if (item.photo) {
+          await this.photoService.deletePicture(item.photo, item.index);
+        }
+        this.rebuildGalleryItems();
+      }
+    }, {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel',
+    });
+
     const actionSheet = await this.actionSheetController.create({
       header,
-      buttons: [{
-        text: 'View',
-        icon: 'open-outline',
-        handler: () => {
-          this.openFile(item);
-        }
-      }, {
-        text: 'Delete',
-        role: 'destructive',
-        icon: 'trash',
-        handler: () => {
-          if (isVideo && item.video) {
-            this.photoService.deleteVideo(item.video, item.index);
-          } else if (item.photo) {
-            this.photoService.deletePicture(item.photo, item.index);
-          }
-        }
-      }, {
-        text: 'Cancel',
-        icon: 'close',
-        role: 'cancel',
-      }]
+      animated: false,
+      buttons,
     });
     await actionSheet.present();
+  }
+
+  private async editPhoto(photo: UserPhoto): Promise<void> {
+    const { MarkerArea } = await import('markerjs2');
+
+    if (!photo.filepath) return;
+
+    if (!photo.sourceFilepath) {
+      photo.sourceFilepath = 'source_' + photo.filepath;
+      await Filesystem.copy({
+        from: photo.filepath,
+        to: photo.sourceFilepath,
+        directory: Directory.Data,
+        toDirectory: Directory.Data,
+      });
+    }
+
+    const file = await Filesystem.readFile({
+      path: photo.sourceFilepath,
+      directory: Directory.Data,
+    });
+    const src = `data:image/jpeg;base64,${file.data}`;
+
+    const backdrop = document.createElement('div');
+    backdrop.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;padding-top:env(safe-area-inset-top);';
+    document.body.appendChild(backdrop);
+
+    const img = new Image();
+    img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
+
+    img.onload = () => {
+      backdrop.appendChild(img);
+
+      const markerArea = new MarkerArea(img);
+      markerArea.targetRoot = backdrop;
+      markerArea.renderAtNaturalSize = true;
+      markerArea.renderImageType = 'image/jpeg';
+      markerArea.renderImageQuality = 1;
+
+      markerArea.addEventListener('render', async (event: any) => {
+        backdrop.remove();
+
+        await Filesystem.writeFile({
+          path: photo.filepath,
+          data: event.dataUrl,
+          directory: Directory.Data,
+        });
+
+        photo.editorState = event.state;
+
+        const { uri } = await Filesystem.getUri({
+          path: photo.filepath,
+          directory: Directory.Data,
+        });
+        photo.webviewPath = Capacitor.convertFileSrc(uri) + '?t=' + Date.now();
+
+        await this.photoService.persistPhotos();
+        this.rebuildGalleryItems();
+      });
+
+      markerArea.addEventListener('close', () => {
+        backdrop.remove();
+      });
+
+      markerArea.show();
+
+      if (photo.editorState) {
+        markerArea.restoreState(photo.editorState as any);
+      }
+    };
+
+    img.onerror = () => backdrop.remove();
+    img.src = src;
   }
 
   private async openFile(item: GalleryItem) {

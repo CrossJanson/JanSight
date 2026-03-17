@@ -1,7 +1,13 @@
+:host ion-content {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 .gallery-item {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .video-badge {
