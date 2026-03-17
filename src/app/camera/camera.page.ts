@@ -18,6 +18,7 @@ export class CameraPage implements OnInit {
     quality: 90,
     containerId: 'camera-container',
     flashAutoModeEnabled: false,
+    enableEditing: true,
     pinchToZoom: {
       enabled: true,
       lockToNearestStep: false
