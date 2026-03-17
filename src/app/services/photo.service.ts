@@ -72,16 +72,20 @@ export class PhotoService {
   }
 
   public async addMultipleToGallery(images: CapturedImage[]) {
-    const photos: Photo[] = [];
+    const savedPhotos: UserPhoto[] = [];
     for (const image of images) {
-      photos.push({
+      const photo: Photo = {
         webPath: image.data.webPath,
         saved: false,
         format: 'jpeg',
-      });
+      };
+      const saved = await this.savePicture(photo);
+      if (image.data.editorState) {
+        saved.editorState = image.data.editorState;
+      }
+      savedPhotos.push(saved);
     }
 
-    const savedPhotos = await this.savePictures(photos);
     this.photos.unshift(...savedPhotos);
 
     Preferences.set({
