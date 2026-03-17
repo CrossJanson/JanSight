@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
@@ -135,6 +136,18 @@ export class PhotoService {
       webviewPath: photo.webPath,
       timestamp: now,
     };
+  }
+
+  private async resolveWebviewPath(path: string): Promise<string | undefined> {
+    try {
+      const { uri } = await Filesystem.getUri({
+        path,
+        directory: Directory.Data,
+      });
+      return Capacitor.convertFileSrc(uri);
+    } catch {
+      return undefined;
+    }
   }
 
   private async readAsBase64(photo: Photo) {
