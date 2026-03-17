@@ -211,6 +211,13 @@ export class PhotoService {
     });
   }
 
+  public async persistPhotos(): Promise<void> {
+    await Preferences.set({
+      key: this.PHOTO_STORAGE,
+      value: JSON.stringify(this.photos),
+    });
+  }
+
   private convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = reject;
