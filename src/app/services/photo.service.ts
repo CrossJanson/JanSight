@@ -31,7 +31,20 @@ export class PhotoService {
     const { value: videoValue } = await Preferences.get({ key: this.VIDEO_STORAGE });
     this.videos = (videoValue ? JSON.parse(videoValue) : []) as UserVideo[];
 
-    if (!this.platform.is('hybrid')) {
+    if (this.platform.is('hybrid')) {
+      for (const photo of this.photos) {
+        const resolved = await this.resolveWebviewPath(photo.filepath);
+        if (resolved) {
+          photo.webviewPath = resolved;
+        }
+      }
+      for (const video of this.videos) {
+        const resolved = await this.resolveWebviewPath(video.filepath);
+        if (resolved) {
+          video.webviewPath = resolved;
+        }
+      }
+    } else {
       for (let photo of this.photos) {
         const readFile = await Filesystem.readFile({
             path: photo.filepath,
