@@ -222,6 +222,8 @@ export interface UserPhoto {
   filepath: string;
   webviewPath?: string;
   timestamp: number;
+  editorState?: unknown;
+  sourceFilepath?: string;
 }
 
 export interface UserVideo {
