@@ -102,9 +102,11 @@ export class PhotoService {
       toDirectory: Directory.Data
     });
 
+    const webviewPath = await this.resolveWebviewPath(fileName);
+
     return {
       filepath: fileName,
-      webviewPath: video.data.webPath || video.data.uri,
+      webviewPath: webviewPath || video.data.webPath || video.data.uri,
       thumbnail: video.data.thumbnail,
       duration: video.data.duration,
       timestamp: now,
@@ -131,9 +133,11 @@ export class PhotoService {
       directory: Directory.Data
     });
 
+    const webviewPath = await this.resolveWebviewPath(fileName);
+
     return {
       filepath: fileName,
-      webviewPath: photo.webPath,
+      webviewPath: webviewPath || photo.webPath,
       timestamp: now,
     };
   }
