@@ -1,5 +1,5 @@
 PODS:
-  - CameraMultiCapture (0.3.0):
+  - CameraMultiCapture (0.3.2):
     - Capacitor
   - Capacitor (7.4.1):
     - CapacitorCordova
@@ -30,7 +30,7 @@ PODS:
   - IonicLiveUpdates (0.5.7)
 
 DEPENDENCIES:
-  - CameraMultiCapture (from `../../../capacitor-multiple-images/camera-multi-capture`)
+  - CameraMultiCapture (from `../../node_modules/camera-multi-capture`)
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
@@ -51,7 +51,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   CameraMultiCapture:
-    :path: "../../../capacitor-multiple-images/camera-multi-capture"
+    :path: "../../node_modules/camera-multi-capture"
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
@@ -78,7 +78,7 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
-  CameraMultiCapture: b81275423a04aca6bc0461f8df88070533cc5b19
+  CameraMultiCapture: 13dc44e258193e9a5773cbf9f19221f2022c526d
   Capacitor: 78ad32d4b0d9dfa25402eb8b0ac46c2b8a4696b8
   CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
   CapacitorCamera: 6e73f1fc6c629a672658705a02409b60854bc0f1
@@ -94,6 +94,6 @@ SPEC CHECKSUMS:
   IONFilesystemLib: 89258b8e3e85465da93127d25d7ce37f977e8a6f
   IonicLiveUpdates: 2a722280f5052fcc5363b0e86317e9e7d1504215
 
-PODFILE CHECKSUM: 707da14be3e2996fdb07ac21ef310cc090bb68c4
+PODFILE CHECKSUM: e9ba74ce7c3ba5552d60e286042dd9f3e8a624a7
 
 COCOAPODS: 1.16.2

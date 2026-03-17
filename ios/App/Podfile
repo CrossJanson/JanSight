@@ -21,7 +21,7 @@ def capacitor_pods
   pod 'CapacitorPreferences', :path => '../../node_modules/@capacitor/preferences'
   pod 'CapacitorScreenOrientation', :path => '../../node_modules/@capacitor/screen-orientation'
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
-  pod 'CameraMultiCapture', :path => '../../../capacitor-multiple-images/camera-multi-capture'
+  pod 'CameraMultiCapture', :path => '../../node_modules/camera-multi-capture'
 end
 
 target 'App' do
