@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, ToastController } from '@ionic/angular';
 import { CameraMultiCapture, CameraOverlayOptions, CameraOverlayResult, initialize } from 'camera-multi-capture';
 import { CameraService } from '../services/camera.service';
 import { CloudUploadService } from '../services/cloud-upload.service';
@@ -67,7 +67,8 @@ export class CameraPage implements OnInit {
     private cameraService: CameraService,
     private cloudUploadService: CloudUploadService,
     private settingsService: SettingsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -109,6 +110,7 @@ export class CameraPage implements OnInit {
         window.addEventListener('photoAdded', this.handlePhotoAdded);
         window.addEventListener('videoRecordingStopped', this.handleVideoAdded);
       }
+      window.addEventListener('photoUpdated', this.handlePhotoUpdated);
 
       const result: CameraOverlayResult = await initialize(this.cameraOverlayOptions);
 
@@ -156,6 +158,28 @@ export class CameraPage implements OnInit {
     }
   }
 
+  private handlePhotoUpdated = async (event: Event): Promise<void> => {
+    const customEvent = event as CustomEvent;
+    const imageId = customEvent.detail.imageId;
+    try {
+      const toast = await this.toastController.create({
+        message: `Photo ${imageId} updated with annotations`,
+        duration: 2000,
+        color: 'success',
+        position: 'bottom',
+      });
+      await toast.present();
+    } catch (error) {
+      const toast = await this.toastController.create({
+        message: 'Failed to process photo update',
+        duration: 2000,
+        color: 'danger',
+        position: 'bottom',
+      });
+      await toast.present();
+    }
+  }
+
   private handleVideoAdded = async (event: Event): Promise<void> => {
     const customEvent = event as CustomEvent;
     const videoUri = customEvent.detail.video.uri;
@@ -169,6 +193,7 @@ export class CameraPage implements OnInit {
 
   private cleanupEventHandlers(): void {
     window.removeEventListener('photoAdded', this.handlePhotoAdded);
+    window.removeEventListener('photoUpdated', this.handlePhotoUpdated);
     window.removeEventListener('videoRecordingStopped', this.handleVideoAdded);
   }
 }
