@@ -16,6 +16,7 @@ export class CameraPage implements OnInit {
 
   cameraOverlayOptions: CameraOverlayOptions = {
     quality: 90,
+    maxRecordingDuration: 30,
     containerId: 'camera-container',
     flashAutoModeEnabled: false,
     enableEditing: true,
@@ -64,7 +65,7 @@ export class CameraPage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private cameraService: CameraService,
+    private cameraService: CameraService, 
     private cloudUploadService: CloudUploadService,
     private settingsService: SettingsService,
     private route: ActivatedRoute,
