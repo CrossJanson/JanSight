@@ -1,5 +1,5 @@
 PODS:
-  - CameraMultiCapture (0.10.6):
+  - CameraMultiCapture (0.10.7):
     - Capacitor
   - Capacitor (7.4.1):
     - CapacitorCordova
@@ -78,7 +78,7 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
-  CameraMultiCapture: 48a8a070aac3d9fe5c7868b01ce57b73e1b73660
+  CameraMultiCapture: 5eb7f5a8a81ca9297a7c66f54104785a4135a857
   Capacitor: 78ad32d4b0d9dfa25402eb8b0ac46c2b8a4696b8
   CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
   CapacitorCamera: 6e73f1fc6c629a672658705a02409b60854bc0f1
