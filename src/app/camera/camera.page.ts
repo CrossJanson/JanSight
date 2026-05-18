@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, ToastController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { CameraMultiCapture, CameraOverlayOptions, CameraOverlayResult, initialize } from 'camera-multi-capture';
 import { CameraService } from '../services/camera.service';
 import { CloudUploadService } from '../services/cloud-upload.service';
 import { SettingsService } from '../services/settings.service';
 import { ActivatedRoute } from '@angular/router';
+import { secrets } from '../../environments/secrets';
 
 @Component({
   selector: 'app-camera',
@@ -19,7 +20,9 @@ export class CameraPage implements OnInit {
     maxRecordingDuration: 30,
     containerId: 'camera-container',
     flashAutoModeEnabled: false,
-    enableEditing: true,
+    enableEditing: {
+      markerJsLicenseKey: secrets.markerJsLicenseKey
+    },
     pinchToZoom: {
       enabled: true,
       lockToNearestStep: false
@@ -68,8 +71,7 @@ export class CameraPage implements OnInit {
     private cameraService: CameraService, 
     private cloudUploadService: CloudUploadService,
     private settingsService: SettingsService,
-    private route: ActivatedRoute,
-    private toastController: ToastController
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -159,26 +161,8 @@ export class CameraPage implements OnInit {
     }
   }
 
-  private handlePhotoUpdated = async (event: Event): Promise<void> => {
-    const customEvent = event as CustomEvent;
-    const imageId = customEvent.detail.imageId;
-    try {
-      const toast = await this.toastController.create({
-        message: `Photo ${imageId} updated with annotations`,
-        duration: 2000,
-        color: 'success',
-        position: 'bottom',
-      });
-      await toast.present();
-    } catch (error) {
-      const toast = await this.toastController.create({
-        message: 'Failed to process photo update',
-        duration: 2000,
-        color: 'danger',
-        position: 'bottom',
-      });
-      await toast.present();
-    }
+  private handlePhotoUpdated = async (_event: Event): Promise<void> => {
+    // Photo updated with annotations — no-op
   }
 
   private handleVideoAdded = async (event: Event): Promise<void> => {

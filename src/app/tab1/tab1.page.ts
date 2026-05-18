@@ -119,7 +119,7 @@ export class Tab1Page {
   }
 
   private async editPhoto(photo: UserPhoto): Promise<void> {
-    const { MarkerArea, Activator } = await import('markerjs2');
+    const { MarkerArea, /* Activator */ } = await import('markerjs2');
 
     if (!photo.filepath) return;
 
@@ -180,7 +180,7 @@ export class Tab1Page {
         backdrop.remove();
       });
 
-     Activator.addKey();
+     // Activator.addKey();
       markerArea.show();
 
       if (photo.editorState) {
