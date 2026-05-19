@@ -5,7 +5,6 @@ import { CameraService } from '../services/camera.service';
 import { CloudUploadService } from '../services/cloud-upload.service';
 import { SettingsService } from '../services/settings.service';
 import { ActivatedRoute } from '@angular/router';
-import { secrets } from '../../environments/secrets';
 
 @Component({
   selector: 'app-camera',
@@ -21,7 +20,7 @@ export class CameraPage implements OnInit {
     containerId: 'camera-container',
     flashAutoModeEnabled: false,
     enableEditing: {
-      markerJsLicenseKey: secrets.markerJsLicenseKey
+      markerJsLicenseKey: 'MJS2-F907-S214-3611'
     },
     pinchToZoom: {
       enabled: true,

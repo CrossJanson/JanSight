@@ -36,7 +36,7 @@
     "@capacitor/status-bar": "7.0.1",
     "@ionic/angular": "^8.0.0",
     "@ionic/pwa-elements": "^3.3.0",
-    "camera-multi-capture": "github:hemangsk/capacitor-camera-multicapture",
+    "camera-multi-capture": "github:hemangsk/capacitor-camera-multicapture#v0.11.1",
     "ionicons": "^7.0.0",
     "markerjs2": "^2.32.7",
     "rxjs": "~7.8.0",
