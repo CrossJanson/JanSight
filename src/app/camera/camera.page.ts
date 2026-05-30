@@ -97,7 +97,7 @@ export class CameraPage implements OnInit {
     try {
       const permissions = await CameraMultiCapture.checkPermissions();
 
-      if (permissions.camera !== 'granted' || permissions.photos !== 'granted') {
+      if (permissions.camera !== 'granted') {
         const result = await CameraMultiCapture.requestPermissions();
 
         if (result.camera !== 'granted') {
