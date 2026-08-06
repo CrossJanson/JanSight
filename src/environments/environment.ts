@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  api: {
+    authEndpoint: 'https://api.example.com/auth/login',
+    sasTokenEndpoint: 'https://api.example.com/api/upload/sas-token'
+  }
 };
 
 /*

@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Photo Gallery
+      Gallery
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -13,14 +13,18 @@
     </ion-toolbar>
   </ion-header>
 
-<ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
-        <ion-img [src]="photo.webviewPath" (click)="showActionSheet(photo, position)"></ion-img>
+      <ion-col size="6" *ngFor="let item of galleryItems; trackBy: trackByGalleryItem">
+        <div class="gallery-item" (click)="showActionSheet(item)">
+          <ion-img [src]="getThumbnail(item)"></ion-img>
+
+          <div *ngIf="item.type === 'video'" class="video-badge">
+            <ion-icon name="play-circle"></ion-icon>
+            <span>{{ formatDuration(item.video?.duration) }}</span>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
-
-  <!-- <app-explore-container name="Gallery"></app-explore-container> -->
 </ion-content>

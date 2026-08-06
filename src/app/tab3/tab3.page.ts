@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab3',
@@ -8,7 +8,34 @@ import { IonItem, IonList, IonToggle } from '@ionic/angular/standalone';
   standalone: false,
 })
 export class Tab3Page {
+  captureMode: string = 'infinite';
+  customCaptureCount: number = 5;
 
-  constructor() {}
+  constructor(private navCtrl: NavController) {}
 
+  onSegmentChange(event: any) {
+    this.captureMode = event.detail.value;
+  }
+
+  getMaxCaptures(): number | undefined {
+    switch (this.captureMode) {
+      case 'single':
+        return 1;
+      case 'custom':
+        return this.customCaptureCount;
+      case 'infinite':
+        return undefined;
+      default:
+        return undefined;
+    }
+  }
+
+  async initCamera() {
+    const maxCaptures = this.getMaxCaptures();
+    this.navCtrl.navigateForward('/camera', {
+      queryParams: {
+        maxCaptures: maxCaptures
+      }
+    });
+  }
 }
